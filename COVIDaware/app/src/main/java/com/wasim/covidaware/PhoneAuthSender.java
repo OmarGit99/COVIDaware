@@ -2,6 +2,7 @@ package com.wasim.covidaware;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,14 +34,14 @@ public class PhoneAuthSender {
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber(mobile)       // Phone number to verify
-                        .setTimeout(120L, TimeUnit.SECONDS) // Timeout and unit
+                        .setTimeout(20L, TimeUnit.SECONDS) // Timeout and unit
                         .setActivity((Activity) c)                 // Activity (for callback binding)
                         .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                         .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
-    private static void verifyVerificationCode(String code) {
+    public static void verifyVerificationCode(String code) {
         //creating the credential
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
 
@@ -104,6 +105,8 @@ public class PhoneAuthSender {
                         if (task.isSuccessful()) {
                             //verification successful we will start the profile activity
                             Toast.makeText(c, "Logged in" , Toast.LENGTH_SHORT).show();
+                            c.startActivity(new Intent(c,MainActivity.class));
+                            ((Activity)c).finish();
 
                         } else {
 

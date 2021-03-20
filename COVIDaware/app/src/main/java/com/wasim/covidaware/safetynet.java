@@ -21,7 +21,7 @@ import static android.content.ContentValues.TAG;
 
 public class safetynet {
 
-    public static void checkEnabled(Context c) {
+    public static void checkEnabled(Context c, String mobile) {
         SafetyNet.getClient(c)
                 .isVerifyAppsEnabled()
                 .addOnCompleteListener(new OnCompleteListener<SafetyNetApi.VerifyAppsUserResponse>() {
@@ -31,10 +31,10 @@ public class safetynet {
                             SafetyNetApi.VerifyAppsUserResponse result = task.getResult();
                             if (result.isVerifyAppsEnabled()) {
                                 Log.d("MY_APP_TAG", "The Verify Apps feature is enabled.");
-                                verify(c);
+                                verify(c,mobile);
                                // MainActivity m = new MainActivity();m.verify();
                             } else {
-                                enable(c);
+                                enable(c, mobile);
                             }
                         } else {
                             Log.e("MY_APP_TAG", "A general error occurred.");
@@ -45,7 +45,7 @@ public class safetynet {
 
     static int t = 0;
 
-    private static void enable(Context c) {
+    private static void enable(Context c, String mobile) {
         SafetyNet.getClient(c)
                 .enableVerifyApps()
                 .addOnCompleteListener(new OnCompleteListener<SafetyNetApi.VerifyAppsUserResponse>() {
@@ -56,12 +56,12 @@ public class safetynet {
                             if (result.isVerifyAppsEnabled()) {
                                 Log.d("MY_APP_TAG", "The user gave consent " +
                                         "to enable the Verify Apps feature.");
-                                verify(c);
+                                verify(c,mobile);
                             } else {
                                 if (t > 2)
                                     ((Activity) c).finish();
                                 Toast.makeText(c, "Please Enable c Setting to Proceed Further", Toast.LENGTH_LONG).show();
-                                enable(c);
+                                enable(c,mobile);
                                 t++;
                             }
                         } else {
@@ -71,13 +71,13 @@ public class safetynet {
                 });
     }
 
-    public static void verify(Context c) {
+    public static void verify(Context c, String mobile) {
         SafetyNet.getClient((Activity)c).verifyWithRecaptcha("6Lez24YaAAAAAJpQL50xj5M9PQDQJ08XqN8iGfy2")
                 .addOnSuccessListener((Activity)c, new OnSuccessListener<SafetyNetApi.RecaptchaTokenResponse>() {
                     @Override
                     public void onSuccess(SafetyNetApi.RecaptchaTokenResponse recaptchaTokenResponse) {
                         String userResponseToken = recaptchaTokenResponse.getTokenResult();
-                        com.wasim.covidaware.PhoneAuthSender.sendVerificationCode("+919867735957", (Activity)c);
+                        com.wasim.covidaware.PhoneAuthSender.sendVerificationCode(mobile, (Activity)c);
                     }
                 })
                 .addOnFailureListener((Activity)c, new OnFailureListener() {
