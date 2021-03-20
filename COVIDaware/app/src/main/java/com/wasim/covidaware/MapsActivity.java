@@ -45,31 +45,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        pd = new ProgressDialog(this);
-        pd.setTitle("Loading Maps...");
-        pd.setCancelable(false);
-        pd.show();
 
-        FirebaseDatabase.getInstance().getReference("LocData")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            for (Iterator<DataSnapshot> it = snapshot.getChildren().iterator(); it.hasNext(); ) {
-                                DataSnapshot sn = it.next();
-                                String[] sll = sn.getValue(String.class).split(",");
-                                mi.add(new MyItem(new LatLng(Double.parseDouble(sll[0]), Double.parseDouble(sll[1]))));
-                                mapFragment.getMapAsync(MapsActivity.this);
-                                pd.dismiss();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+        mapFragment.getMapAsync(MapsActivity.this);
 
     }
 
@@ -85,8 +62,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ClusterManager<MyItem> clusterManager;
     Algorithm<MyItem> clusterManagerAlgorithm;
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        pd = new ProgressDialog(this);
+        pd.setTitle("Loading Maps...");
+        pd.setCancelable(false);
+        pd.show();
+
         mMap = googleMap;
 
         mMap.clear();
@@ -99,15 +83,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         clusterManager = new ClusterManager<MyItem>(this, mMap);
-        clusterManagerAlgorithm = new NonHierarchicalDistanceBasedAlgorithm();
-        for(int i=0;i<mi.size();i++){
+        cluster();
+        /*for(int i=0;i<mi.size();i++){
             if((mi.size()-i)>=100)
                 clusterManager.addItems(mi.subList(i,i+100));
             else
                 clusterManager.addItems(mi.subList(i,mi.size()));
             i=i+100;
-        }
-        clusterManager.setAlgorithm(clusterManagerAlgorithm);
+        }*/
         //clusterManager.setRenderer(new MyClusterRenderer(this, mMap, clusterManager));
         clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MyItem>() {
             @Override
@@ -123,5 +106,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnCameraIdleListener(clusterManager);
 
         pd.dismiss();
+    }
+
+    private void cluster() {
+        FirebaseDatabase.getInstance().getReference("LocData")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (Iterator<DataSnapshot> it = snapshot.getChildren().iterator(); it.hasNext(); ) {
+                                DataSnapshot sn = it.next();
+                                String[] sll = sn.getValue(String.class).split(",");
+                                clusterManager.addItem(new MyItem(new LatLng(Double.parseDouble(sll[0]), Double.parseDouble(sll[1]))));
+                                clusterManager.cluster();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 }
