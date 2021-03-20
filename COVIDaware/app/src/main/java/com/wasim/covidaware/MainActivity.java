@@ -52,6 +52,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startLocationService();
+                if(!isLocationServiceRunning()){
+                    proxy.setText("SOS LOCATION PROMITY - RUNNING");
+                }
+                else{
+                    proxy.setText("SOS LOCATION PROMITY - STOPPED");
+                    LocationService ls = new LocationService();
+                    ls.stop();
+                }
             }
         });
 
