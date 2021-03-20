@@ -67,27 +67,10 @@ public class locationpermission extends AppCompatActivity {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission((Activity)c,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
-
+                for(int i : grantResults){
+                    if(i==0){
+                        checkLocationPermission(c);
                     }
-
-                } else {
-
-                    if (ContextCompat.checkSelfPermission((Activity)c,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
-
-                    }
-
                 }
                 return;
             }
