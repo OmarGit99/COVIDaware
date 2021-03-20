@@ -127,4 +127,13 @@
         android:textColor="@color/white"
         android:textSize="18sp" />
 
+    <TextView android:id="@+id/orlogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="New Here! Register"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:textColor="#3F51B5"/>
+
 </LinearLayout>
