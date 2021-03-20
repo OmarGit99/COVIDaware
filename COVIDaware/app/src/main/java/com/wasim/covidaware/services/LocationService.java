@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +36,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wasim.covidaware.MyItem;
+
+import java.util.Iterator;
 
 
 public class LocationService extends Service {
@@ -101,11 +106,53 @@ public class LocationService extends Service {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
 
+                        FirebaseDatabase.getInstance().getReference("LocData").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if(snapshot.exists()){
+                                    for (Iterator<DataSnapshot> it = snapshot.getChildren().iterator(); it.hasNext(); ) {
+                                        DataSnapshot sn = it.next();
+                                        String[] sll = sn.getValue(String.class).split(",");
+                                        double lon1 = locationResult.getLastLocation().getLongitude(),
+                                                lat1 = locationResult.getLastLocation().getLatitude(),
+                                                lon2 = Double.parseDouble(sll[1]),
+                                                lat2 = Double.parseDouble(sll[0]);
+                                        double theta = lon1 - lon2;
+                                        double dist = Math.sin(deg2rad(lat1))
+                                                * Math.sin(deg2rad(lat2))
+                                                + Math.cos(deg2rad(lat1))
+                                                * Math.cos(deg2rad(lat2))
+                                                * Math.cos(deg2rad(theta));
+                                        dist = Math.acos(dist);
+                                        dist = rad2deg(dist);
+                                        dist = dist * 60 ;
 
+                                        if(dist<=2.5f){
+                                            Toast.makeText(LocationService.this, "distance"+dist, Toast.LENGTH_SHORT).show();
+                                            Log.e(TAG, "onDataChange: "+dist );
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
 
                     }
                 },
                 Looper.myLooper()); // Looper.myLooper tells this to repeat forever until thread is destroyed
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
     }
 
     public void stop(){

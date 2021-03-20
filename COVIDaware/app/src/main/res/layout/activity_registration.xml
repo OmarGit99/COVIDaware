@@ -20,54 +20,58 @@
         android:id="@+id/fstTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:text="Full Name"/>
     <EditText
         android:id="@+id/usernamefield"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
+        android:layout_marginLeft="8dp"
         android:ems="10"/>
     <TextView
         android:id="@+id/secTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:text="Adhaar Card Number"/>
     <EditText
         android:id="@+id/aadharnumberfield"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
         android:inputType="number"
-        android:layout_marginLeft="100dp"
+        android:maxLength="12"
         android:ems="10"/>
     <TextView
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Phone Number"
-        android:layout_marginLeft="100dp" />
+        android:layout_gravity="center_horizontal" />
     <EditText
         android:id="@+id/phonenumberfield"
-        android:layout_width="wrap_content"
-        android:inputType="phone"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
+        android:layout_marginLeft="8dp"
+        android:inputType="phone"
+        android:maxLength="10"
+        android:hint="Without +91"
         android:ems="10" />
     <TextView
         android:id="@+id/fourthTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Date of Birth"
-        android:layout_marginLeft="100dp" />
+        android:layout_gravity="center_horizontal" />
     <EditText
         android:id="@+id/dobfield"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
         android:hint="(dd/mm/yyyy)"
-        android:layout_marginLeft="100dp"
+        android:maxLength="10"
         android:inputType="text"
         android:ems="10" />
     <Button
@@ -76,13 +80,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="Register" />
-    <TextView android:id="@+id/lnkLogin"
-        android:layout_width="match_parent"
+
+    <Button
+        android:id="@+id/loginbtn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Already Registered? Login here"
-        android:gravity="center"
-        android:textSize="20dp"
-        android:textColor="#3F51B5"
-        android:onClick="test"/>
+        android:textColor="@color/teal_200"
+        android:background="@android:color/transparent"
+        android:layout_gravity="center_horizontal"
+        android:text="Already Registered! Click Here to login" />
+
 </LinearLayout>

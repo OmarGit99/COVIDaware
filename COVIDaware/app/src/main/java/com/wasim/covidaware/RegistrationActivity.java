@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -77,7 +78,7 @@ public class RegistrationActivity extends AppCompatActivity {
             phonenumberfield.setError("");
             allfieldsvalid[0]++;
         }
-        if(dob.getText().toString().matches("") || Aadharnumberfield.length() < 10){
+        if(dob.getText().toString().matches("") || dob.getText().length() < 10){
             dob.setError("Please enter a valid Aadhar card number");
         }
         else{      //if valid phone number
@@ -95,7 +96,9 @@ public class RegistrationActivity extends AppCompatActivity {
             ref.child("Name").setValue(username);
             ref.child("pn").setValue("+91"+phonenumber);
             ref.child("aadhar").setValue(aadharnumber);
-            ref.child("dob").setValue(dob);
+            //ref.child("dob").setValue(dob.getText());
+
+            Toast.makeText(this, "Registration Successful Pls Login", Toast.LENGTH_LONG).show();
 
             startActivity(new Intent(this, LoginActivity.class));
 
@@ -114,17 +117,16 @@ public class RegistrationActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_registration);
 
 
         //Textview orlogin for jumping to login activity
 
-        orlogin = (TextView) findViewById(R.id.orlogin);
-        orlogin.setOnClickListener(new View.OnClickListener() {
+        ((Button)findViewById(R.id.loginbtn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);                               // START INTENT FROM HERE
+                startActivity(intent);
             }
         });
 

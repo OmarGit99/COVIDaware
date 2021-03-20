@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.broooapps.otpedittext2.OnCompleteListener;
@@ -22,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     AppCompatEditText phone;
     AppCompatButton send, verify;
     OtpEditText otpview;
+    TextView orreg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,14 @@ public class LoginActivity extends AppCompatActivity {
         send = findViewById(R.id.btnSendConfirmationCode);
         verify = findViewById(R.id.verify);
         otpview = findViewById(R.id.otp_view);
+        orreg = findViewById(R.id.orlogin);
+
+        orreg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this,RegistrationActivity.class));
+            }
+        });
 
         otpview.setTextColor(getResources().getColor(R.color.white));
         otpview.setOnCompleteListener(new OnCompleteListener() {
