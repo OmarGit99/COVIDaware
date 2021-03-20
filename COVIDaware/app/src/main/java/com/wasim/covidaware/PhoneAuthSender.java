@@ -46,7 +46,7 @@ public class PhoneAuthSender {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
 
         //signing the user
-        signInWithPhoneAuthCredential(credential);
+        signInWithPhoneAuthCredential(PhoneAuthProvider.getCredential(mVerificationId, code));
     }
 
     static Context c ;

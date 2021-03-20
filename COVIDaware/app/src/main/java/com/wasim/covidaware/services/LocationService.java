@@ -46,14 +46,15 @@ public class LocationService extends Service {
     private static final String TAG = "LocationService";
 
     private FusedLocationProviderClient mFusedLocationClient;
-    private final static long UPDATE_INTERVAL = 1000;  /* 1 secs */
-    private final static long FASTEST_INTERVAL = 500; /* 1/2 sec */
+    private final static long UPDATE_INTERVAL = 30000;  /* 1 secs */
+    private final static long FASTEST_INTERVAL = 30000; /* 1/2 sec */
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+    Notification notification;
 
     @Override
     public void onCreate() {
@@ -69,8 +70,9 @@ public class LocationService extends Service {
 
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
 
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("")
+
+            notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("COVIDaware Saving You From The Wrath Of COVID-19")
                     .setContentText("").build();
 
             startForeground(1, notification);
@@ -113,22 +115,18 @@ public class LocationService extends Service {
                                     for (Iterator<DataSnapshot> it = snapshot.getChildren().iterator(); it.hasNext(); ) {
                                         DataSnapshot sn = it.next();
                                         String[] sll = sn.getValue(String.class).split(",");
-                                        double lon1 = locationResult.getLastLocation().getLongitude(),
-                                                lat1 = locationResult.getLastLocation().getLatitude(),
-                                                lon2 = Double.parseDouble(sll[1]),
-                                                lat2 = Double.parseDouble(sll[0]);
-                                        double theta = lon1 - lon2;
-                                        double dist = Math.sin(deg2rad(lat1))
-                                                * Math.sin(deg2rad(lat2))
-                                                + Math.cos(deg2rad(lat1))
-                                                * Math.cos(deg2rad(lat2))
-                                                * Math.cos(deg2rad(theta));
-                                        dist = Math.acos(dist);
-                                        dist = rad2deg(dist);
-                                        dist = dist * 60 ;
+                                        LatLng ll = new LatLng(Double.parseDouble(sll[0]),Double.parseDouble(sll[1]));
+                                        Location A = locationResult.getLastLocation();
+                                        Location locationB = new Location("point B");
+                                        locationB.setLatitude(ll.latitude);
+                                        locationB.setLongitude(ll.longitude);
 
-                                        if(dist<=2.5f){
-                                            Toast.makeText(LocationService.this, "distance"+dist, Toast.LENGTH_SHORT).show();
+                                        double dist = A.distanceTo(locationB);
+
+                                        if(dist<=1000){
+                                            Toast.makeText(LocationService.this, "You are "+dist+"m away from a containment zone", Toast.LENGTH_LONG).show();
+                                            //Toast.makeText(LocationService.this, "distance"+dist, Toast.LENGTH_SHORT).show();
+
                                             Log.e(TAG, "onDataChange: "+dist );
                                         }
 
