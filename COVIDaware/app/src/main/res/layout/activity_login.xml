@@ -15,9 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:background="@android:color/transparent"
+        android:fontFamily="@font/corben_bold"
         android:gravity="center"
         android:text="What's your phone number?"
-        android:textSize="20sp" />
+        android:textSize="30sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -89,11 +90,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@color/design_default_color_primary"
         android:padding="6dp"
+        android:background="@color/teal_200"
         android:text="Send Code"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="18sp" />
 
     <com.broooapps.otpedittext2.OtpEditText
@@ -134,6 +135,6 @@
         android:text="New Here! Register"
         android:gravity="center"
         android:textSize="20dp"
-        android:textColor="#3F51B5"/>
+        android:textColor="@color/teal_200"/>
 
 </LinearLayout>
