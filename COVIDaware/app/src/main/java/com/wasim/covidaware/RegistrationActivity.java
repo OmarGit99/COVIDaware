@@ -17,6 +17,9 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.tsongkha.spinnerdatepicker.DatePicker;
+import com.tsongkha.spinnerdatepicker.DatePickerDialog;
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,54 +43,32 @@ public class RegistrationActivity extends AppCompatActivity {
     String phonenumber;
     String aadharnumber;
 
+    DatePickerDialog dp;
 
     Button reg;
 
     //sign up process
     public void signup(){
         //get users details and store them in variables
-        final int[] allfieldsvalid = {0};
         username = usernamefield.getText().toString();
 
         if(usernamefield.getText().toString().matches("") || usernamefield.getText().toString().contains("\\s")){
             usernamefield.setError("Please enter a valid username");
-
+            usernamefield.requestFocus();
+        }
+        else if(phonenumberfield.getText().toString().matches("") || phonenumberfield.length() < 10){
+            phonenumberfield.setError("Please enter a valid phone number");
+            phonenumberfield.requestFocus();
+        }
+        else if(Aadharnumberfield.getText().length() < 12){
+            Aadharnumberfield.setError("Please enter a valid Aadhar card number");
+            Aadharnumberfield.requestFocus();
+        }
+        else if(dob.getText().toString().matches("") || dob.getText().length() < 10){
+            dob.setError("Please enter a valid DOB");
+            dob.requestFocus();
         }
         else{
-            usernamefield.setError(""); //reset the error textview
-            allfieldsvalid[0]++;
-
-
-        }
-
-        //checking phone number field
-        if(phonenumberfield.getText().toString().matches("") || phonenumberfield.length() < 10){
-            phonenumberfield.setError("Please enter a valid phone number");
-        }
-        else{      //if valid phone number
-            phonenumberfield.setError("");
-            allfieldsvalid[0]++;
-        }
-        Log.i("checkey", Integer.toString(allfieldsvalid[0]));
-
-        //checking aadhar number field
-        if(Aadharnumberfield.getText().toString().matches("") || Aadharnumberfield.length() < 12){
-            phonenumberfield.setError("Please enter a valid Aadhar card number");
-        }
-        else{      //if valid phone number
-            phonenumberfield.setError("");
-            allfieldsvalid[0]++;
-        }
-        if(dob.getText().toString().matches("") || dob.getText().length() < 10){
-            dob.setError("Please enter a valid Aadhar card number");
-        }
-        else{      //if valid phone number
-            dob.setError("");
-            allfieldsvalid[0]++;
-        }
-
-        //once all criteria has been met
-        if(allfieldsvalid[0] == 4){
             phonenumber = phonenumberfield.getText().toString();
             aadharnumber = Aadharnumberfield.getText().toString();
 
@@ -96,7 +77,7 @@ public class RegistrationActivity extends AppCompatActivity {
             ref.child("Name").setValue(username);
             ref.child("pn").setValue("+91"+phonenumber);
             ref.child("aadhar").setValue(aadharnumber);
-            //ref.child("dob").setValue(dob.getText());
+            ref.child("dob").setValue(sdob);
 
             Toast.makeText(this, "Registration Successful Pls Login", Toast.LENGTH_LONG).show();
 
@@ -143,6 +124,28 @@ public class RegistrationActivity extends AppCompatActivity {
         dob = findViewById(R.id.dobfield);
         reg = findViewById(R.id.btnLogin);
 
+        dob.setClickable(true);
+        dob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dp = new SpinnerDatePickerDialogBuilder()
+                        .context(RegistrationActivity.this)
+                        .callback(new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                sdob = (dayOfMonth > 9 ? dayOfMonth : "0" + dayOfMonth) + "/" + (monthOfYear > 9 ? monthOfYear : "0" + (monthOfYear + 1)) + "/" + year;
+                                dob.setText(sdob);
+
+                            }
+                        })
+                        .spinnerTheme(R.style.NumberPickerStyle)
+                        .showTitle(false)
+                        .build();
+                dp.show();
+            }
+        });
+
+
         reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,4 +155,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
     }
+
+    String sdob;
+
 }

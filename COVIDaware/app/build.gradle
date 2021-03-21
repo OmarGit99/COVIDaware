@@ -45,5 +45,5 @@ dependencies {
     implementation 'com.github.swapnil1104:OtpEditText:1.0.0'
     implementation 'com.google.maps.android:android-maps-utils:2.2.0'
     implementation 'com.frlgrd:animated-edit-text:1.0.0'
-
+    implementation 'com.github.drawers:SpinnerDatePicker:2.0.1'
 }
