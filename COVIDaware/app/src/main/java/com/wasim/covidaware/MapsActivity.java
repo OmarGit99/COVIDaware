@@ -9,6 +9,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -33,10 +35,16 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.Algorithm;
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -107,7 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (clusterManager != null)
             clusterManager.clearItems();
         mMap.setTrafficEnabled(true);
-        mMap.setMinZoomPreference(12);
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) { }
         mMap.setMyLocationEnabled(true);
@@ -146,16 +154,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void cluster() {
-        FirebaseDatabase.getInstance().getReference("LocData")
+        clusterManager.clearItems();
+        String d = "2021-06-04";
+        //String d = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        FirebaseDatabase.getInstance().getReference(d+"/Districts")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             for (Iterator<DataSnapshot> it = snapshot.getChildren().iterator(); it.hasNext(); ) {
                                 DataSnapshot sn = it.next();
-                                String[] sll = sn.getValue(String.class).split(",");
-                                clusterManager.addItem(new MyItem(new LatLng(Double.parseDouble(sll[0]), Double.parseDouble(sll[1]))));
-                                clusterManager.cluster();
+                                Geocoder coder = new Geocoder(MapsActivity.this);
+                                List<Address> address;
+
+                                try {
+                                    address = coder.getFromLocationName(sn.child("name").getValue(String.class),1);
+                                    Log.e("map", ""+ new LatLng(address.get(0).getLatitude(),address.get(0).getLongitude()));
+                                    MyItem myItem = new MyItem(new LatLng(address.get(0).getLatitude(),address.get(0).getLongitude()),sn.child("name").getValue(String.class),"Positive cases: "+ sn.child("Positive_cases").getValue(String.class));
+                                    clusterManager.addItem(myItem);
+                                    clusterManager.cluster();
+                                    
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
                             }
                         }
                     }
@@ -165,5 +189,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 });
+
     }
 }

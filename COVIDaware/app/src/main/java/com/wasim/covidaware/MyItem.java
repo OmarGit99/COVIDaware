@@ -17,7 +17,13 @@ public class MyItem implements ClusterItem {
     @Nullable
     @Override
     public String getTitle() {
-        return null;
+        return Title;
+    }
+
+    public MyItem(LatLng position, String title, String snippet) {
+        Position = position;
+        Title = title;
+        this.snippet = snippet;
     }
 
     @Nullable
@@ -27,6 +33,12 @@ public class MyItem implements ClusterItem {
     }
 
     private LatLng Position;
+    private String Title;
+    private String snippet;
+
+    public MyItem(String title) {
+        Title = title;
+    }
 
     public MyItem(LatLng position) {
         Position = position;
