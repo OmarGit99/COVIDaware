@@ -28,9 +28,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.wasim.covidaware.services.LocationService;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import static com.wasim.covidaware.services.LocationService.isIsRunning;
 
@@ -119,27 +122,52 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog pd;
 
     private void predict() {
+
         pd = new ProgressDialog(this);
         pd.setTitle("Loading Predictions");
         pd.setCancelable(false);
         pd.show();
 
-        FirebaseDatabase.getInstance().getReference("Gdata")
+
+        String d = "2021-06-04";
+        //String d = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        FirebaseDatabase.getInstance().getReference(d+"/Districts")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (Iterator<DataSnapshot> it = snapshot.getChildren().iterator(); it.hasNext(); ) {
+
                             DataSnapshot sn = it.next();
                             List<Double> l = new ArrayList<>();
                             DataSnapshot r = null;
-                            for (Iterator<DataSnapshot> iter = sn.getChildren().iterator(); iter.hasNext(); ) {
-                                DataSnapshot s = iter.next();
-                                r = s;
-                                l.add(Double.parseDouble(s.child("AC").getValue(String.class)));
-                            }
-                            predictD.add(r.child("Name").getValue(String.class) + "");
-                            ac.add(r.child("AC").getValue(String.class));
-                            dc.add(r.child("Death cases").getValue(String.class));
+
+                            predictD.add(sn.child("name").getValue(String.class));
+                            ac.add(sn.child("Positive_cases").getValue(String.class));
+                            dc.add(sn.child("Deceased").getValue(String.class));
+
+                            /*
+                            FirebaseDatabase.getInstance().getReference("Predictions/"+d).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for(Iterator<DataSnapshot> it = snapshot.getChildren().iterator();it.hasNext();){
+                                        DataSnapshot sn2 = it.next();
+                                        Log.i("halloowww", sn2.child(d).getValue(String.class));
+                                        predictC.add(sn2.child(sn.child("name").getValue(String.class)).getValue(String.class));
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                             */
+
+
+                            /*
+                            predictD.add(r.child("0").child("name").getValue(String.class) + "");
                             Double avg = calculateAverage(l);
                             List<Double> d = new ArrayList<>();
                             for (Double i : l) {
@@ -148,8 +176,17 @@ public class MainActivity extends AppCompatActivity {
                             Double realavg = calculateAverage(d);
                             DecimalFormat numberFormat = new DecimalFormat("00.0000000");
                             predictC.add((numberFormat.format((Math.sqrt(realavg) * 1000 / avg))) + " % incr/decr");
+                            */
+
+                            String temp = sn.child("Positive_cases").getValue(String.class);
+                            String y = temp.replace(",","");
+                            int inta = Integer.parseInt(y)+(15*Integer.parseInt(y))/100;
+                            predictC.add(String.valueOf(inta));
+
+
                         }
-                        pd.dismiss();
+                        //pd.dismiss();
+
                         ArrayAdapter a = new ArrayAdapter(MainActivity.this, predictD, ac, dc, predictC);
                         lv.setAdapter(a);
                     }
@@ -159,8 +196,9 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-        //pd.dismiss();
+        pd.dismiss();
         Log.e("TAG", "predict: " + predictD + "\n" + predictC);
+
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =

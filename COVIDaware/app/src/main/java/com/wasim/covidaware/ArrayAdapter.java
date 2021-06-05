@@ -15,14 +15,16 @@ class ArrayAdapter extends BaseAdapter {
     private ArrayList<String> list1;
     private ArrayList<String> list2;
     private ArrayList<String> list3;
-    private ArrayList<String> list4;
+    private  ArrayList<String> list4;
 
-    public ArrayAdapter(Context context, ArrayList<String>dname,ArrayList<String>ac,ArrayList<String>dc,ArrayList<String>pd) {
+
+    public ArrayAdapter(Context context, ArrayList<String>dname,ArrayList<String>ac,ArrayList<String>dc, ArrayList<String>pd) {
         this.context= context;
         this.list1= dname;
         this.list2= ac;
         this.list3= dc;
-        this.list4= pd;
+        this.list4=pd;
+
 
     }
 
@@ -48,10 +50,11 @@ class ArrayAdapter extends BaseAdapter {
             t2.setText("Active Cases : "+list2.get(position));
 
         if(position < list3.size())
-            t3.setText("Death Count : "+list3.get(position));
+            t3.setText("Deceased : "+list3.get(position));
+        if(position < list4.size())
+            t4.setText("Prediction of future active cases in a week: "+list4.get(position) + " cases");
 
-        if(position< list4.size())
-            t4.setText("Prediction : "+list4.get(position));
+
 
         return convertView;
     }
